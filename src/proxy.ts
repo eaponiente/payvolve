@@ -1,7 +1,7 @@
 import { type NextRequest } from "next/server";
 import { createClient } from "@/utils/supabase/middleware";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // Wire up the Supabase cookie handling layer.
   // To actively refresh sessions here, call supabase.auth.getUser() or
   // supabase.auth.getSession() inside the createClient helper before
