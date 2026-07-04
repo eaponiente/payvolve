@@ -1,23 +1,23 @@
 const faqs = [
   {
-    q: "Is Payvolve compliant with Philippine payroll regulations?",
+    q: "Is PondoFlow compliant with Philippine payroll regulations?",
     a: "Yes. Payroll runs use the current SSS 2025 contribution table, PhilHealth 5% premium, Pag-IBIG contributions, and the BIR TRAIN withholding tax table. Overtime (125%), night differential (+10%, 10 PM–6 AM), and 13th-month pay under PD 851 are computed automatically, and payslips are BIR-friendly.",
   },
   {
-    q: "How much does Payvolve cost?",
+    q: "How much does PondoFlow cost?",
     a: "One simple plan: ₱999 per company per month plus ₱100 per active employee. The optional Earned Wage Access add-on is ₱100 per employee. Every company starts with a 14-day free trial — no credit card required.",
   },
   {
     q: "Can my employees clock in and out from their phones?",
-    a: "Yes. Payvolve is mobile-first — crew log in on any phone browser to clock in/out, view their weekly schedule, and open their payslips. You can even install it to the home screen like an app, no app store needed.",
+    a: "Yes. PondoFlow is mobile-first — crew log in on any phone browser to clock in/out, view their weekly schedule, and open their payslips. You can even install it to the home screen like an app, no app store needed.",
   },
   {
     q: "How does a payroll run work?",
-    a: "Pick a cutoff (semi-monthly by default) and Payvolve computes every active employee's pay from their time entries — basic pay, overtime, night differential, government deductions, and withholding tax. Review the draft, recompute if needed, then finalize. Finalized runs are locked and payslips become visible to employees.",
+    a: "Pick a cutoff (semi-monthly by default) and PondoFlow computes every active employee's pay from their time entries — basic pay, overtime, night differential, government deductions, and withholding tax. Review the draft, recompute if needed, then finalize. Finalized runs are locked and payslips become visible to employees.",
   },
   {
     q: "Does it handle 13th-month pay?",
-    a: "Yes. Run a dedicated 13th-month payroll and Payvolve computes 1/12 of each employee's basic salary earned within the calendar year, tax-exempt up to the ₱90,000 cap.",
+    a: "Yes. Run a dedicated 13th-month payroll and PondoFlow computes 1/12 of each employee's basic salary earned within the calendar year, tax-exempt up to the ₱90,000 cap.",
   },
   {
     q: "Can I export reports for my accountant or the BIR?",

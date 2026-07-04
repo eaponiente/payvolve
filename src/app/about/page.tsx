@@ -2,13 +2,13 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/marketing/legal-page";
 
-export const metadata: Metadata = { title: "About us — Payvolve" };
+export const metadata: Metadata = { title: "About us — PondoFlow" };
 
 export default function AboutPage() {
   return (
-    <LegalPage title="About Payvolve">
+    <LegalPage title="About PondoFlow">
       <p>
-        Payvolve was born out of payroll nights that ended at 3 AM — spreadsheets,
+        PondoFlow was born out of payroll nights that ended at 3 AM — spreadsheets,
         contribution tables copied from Facebook groups, and the quiet fear of a
         BIR mismatch. We believe Philippine small businesses deserve payroll
         software that understands <em>Philippine</em> payroll: semi-monthly
@@ -26,7 +26,7 @@ export default function AboutPage() {
       </p>
       <h2>Who it&apos;s for</h2>
       <p>
-        We designed Payvolve with food &amp; beverage teams in mind — overnight
+        We designed PondoFlow with food &amp; beverage teams in mind — overnight
         closing shifts, split schedules, daily-rate crew — but it fits any
         Philippine business that runs semi-monthly payroll.
       </p>
@@ -36,7 +36,7 @@ export default function AboutPage() {
         <Link href="/#contact" className="text-emerald-700 underline">
           contact form
         </Link>{" "}
-        or at hello@payvolve.ph.
+        or at hello@pondoflow.ph.
       </p>
     </LegalPage>
   );

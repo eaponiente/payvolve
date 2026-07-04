@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { computeBill } from "./pricing";
 
-describe("computeBill — Payvolve subscription pricing", () => {
+describe("computeBill — PondoFlow subscription pricing", () => {
   it("charges only the base fee with no employees", () => {
     const b = computeBill(0, false);
     expect(b.total).toBe(999);

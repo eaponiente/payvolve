@@ -108,7 +108,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">{children}</main>
       <footer className="no-print border-t border-zinc-200 bg-white">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-4 text-sm text-zinc-400">
-          <span>© {new Date().getFullYear()} Payvolve</span>
+          <span>© {new Date().getFullYear()} PondoFlow</span>
           <BugReportDialog />
         </div>
       </footer>
