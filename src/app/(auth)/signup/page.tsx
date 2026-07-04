@@ -13,7 +13,7 @@ export default function SignupPage() {
       <Card className="w-full max-w-sm p-8">
         <div className="mb-6 text-center">
           <div className="text-2xl font-bold tracking-tight">
-            Pay<span className="text-emerald-600">volve</span>
+            Pondo<span className="text-emerald-600">Flow</span>
           </div>
           <p className="mt-1 text-sm text-zinc-500">
             Set up payroll for your company

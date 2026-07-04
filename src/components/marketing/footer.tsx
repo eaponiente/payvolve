@@ -46,7 +46,7 @@ export function MarketingFooter() {
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
           <div>
             <div className="text-lg font-bold tracking-tight">
-              Pay<span className="text-emerald-600">volve</span>
+              Pondo<span className="text-emerald-600">Flow</span>
             </div>
             <p className="mt-2 text-sm text-zinc-500">
               Payroll, attendance, and scheduling built for Philippine teams.
