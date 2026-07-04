@@ -13,7 +13,7 @@ export function MarketingNav() {
     <header className="sticky top-0 z-40 border-b border-zinc-200/60 bg-white/80 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <Link href="/" className="text-xl font-bold tracking-tight">
-          Pay<span className="text-emerald-600">volve</span>
+          Pondo<span className="text-emerald-600">Flow</span>
         </Link>
         <nav className="hidden items-center gap-1 md:flex">
           {links.map((l) => (

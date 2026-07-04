@@ -53,7 +53,7 @@ export default async function BillingPage() {
     <div className="mx-auto max-w-3xl">
       <PageHeader
         title="Billing"
-        subtitle="Your Payvolve subscription and invoices."
+        subtitle="Your PondoFlow subscription and invoices."
         action={<Badge tone={STATUS_TONE[sub.status]}>{STATUS_LABEL[sub.status]}</Badge>}
       />
 

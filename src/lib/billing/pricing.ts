@@ -1,7 +1,7 @@
 import { round2 } from "@/lib/payroll/money";
 
 /**
- * Payvolve subscription pricing:
+ * PondoFlow subscription pricing:
  * - Base platform fee: ₱999 / company / month
  * - Per active employee: ₱100 / month
  * - Earned Wage Access add-on (optional): ₱100 / active employee / month

@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/marketing/legal-page";
 
-export const metadata: Metadata = { title: "Privacy policy — Payvolve" };
+export const metadata: Metadata = { title: "Privacy policy — PondoFlow" };
 
 export default function PrivacyPolicyPage() {
   return (
     <LegalPage title="Privacy Policy" updated="July 2026">
       <p>
-        This Privacy Policy describes how Payvolve (&quot;we&quot;, &quot;us&quot;)
+        This Privacy Policy describes how PondoFlow (&quot;we&quot;, &quot;us&quot;)
         collects, uses, and protects personal information when you use our
         payroll and workforce management platform. We process personal data in
         accordance with the Data Privacy Act of 2012 (Republic Act No. 10173)
@@ -46,7 +46,7 @@ export default function PrivacyPolicyPage() {
       <p>
         Under the Data Privacy Act you may access, correct, or request deletion
         of your personal data, and lodge complaints with the National Privacy
-        Commission. Contact our Data Protection Officer at privacy@payvolve.ph.
+        Commission. Contact our Data Protection Officer at privacy@pondoflow.ph.
       </p>
     </LegalPage>
   );

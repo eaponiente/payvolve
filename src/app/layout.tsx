@@ -13,11 +13,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Payvolve — Payroll for PH Teams",
+  title: "PondoFlow — Payroll for PH Teams",
   description:
     "Automated payroll, attendance, and payslips for Philippine businesses.",
   manifest: "/manifest.json",
-  appleWebApp: { capable: true, statusBarStyle: "default", title: "Payvolve" },
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "PondoFlow" },
 };
 
 export const viewport: Viewport = {

@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/marketing/legal-page";
 
-export const metadata: Metadata = { title: "Terms of service — Payvolve" };
+export const metadata: Metadata = { title: "Terms of service — PondoFlow" };
 
 export default function TermsPage() {
   return (
     <LegalPage title="Terms of Service" updated="July 2026">
       <p>
-        These Terms govern your use of Payvolve. By creating an account you
+        These Terms govern your use of PondoFlow. By creating an account you
         agree to them on behalf of your company.
       </p>
       <h2>The service</h2>
       <p>
-        Payvolve provides workforce scheduling, time tracking, payroll
+        PondoFlow provides workforce scheduling, time tracking, payroll
         computation, payslips, and related reports. Statutory computations
         follow published Philippine government tables; you remain responsible
         for reviewing payroll runs before finalizing and for your company&apos;s
@@ -39,7 +39,7 @@ export default function TermsPage() {
       <h2>Limitation of liability</h2>
       <p>
         The service is provided &quot;as is&quot;. To the maximum extent
-        permitted by law, Payvolve is not liable for indirect or consequential
+        permitted by law, PondoFlow is not liable for indirect or consequential
         damages, and our aggregate liability is limited to fees paid in the
         three months preceding a claim.
       </p>

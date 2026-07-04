@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 @AGENTS.md
 
-Payvolve is a **multi-tenant payroll SaaS for Philippine businesses** (payroll, scheduling, time tracking, billing) plus a public marketing site. Stack: Next.js 16 (App Router) · Prisma 7 · PostgreSQL · Auth.js v5 · Tailwind 4 · Vitest · Playwright.
+PondoFlow is a **multi-tenant payroll SaaS for Philippine businesses** (payroll, scheduling, time tracking, billing) plus a public marketing site. Stack: Next.js 16 (App Router) · Prisma 7 · PostgreSQL · Auth.js v5 · Tailwind 4 · Vitest · Playwright.
 
 ## Commands
 
@@ -24,7 +24,7 @@ npm run db:seed          # seed demo data (idempotent — skips if demo company 
 
 **Database** runs in Docker on **port 5433** (not the default 5432):
 ```bash
-docker start payvolve-pg    # start existing container
+docker start pondoflow-pg    # start existing container
 npx prisma migrate dev --name <change>   # create + apply a migration
 npx prisma generate                       # REQUIRED after any schema change (see gotchas)
 npx prisma migrate reset --force          # drop + re-migrate (then run db:seed — reset may skip it)

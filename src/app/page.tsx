@@ -171,7 +171,7 @@ export default async function LandingPage() {
               See a real PH payslip — right now
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-zinc-600">
-              Drag the slider. This is the exact engine that runs Payvolve
+              Drag the slider. This is the exact engine that runs PondoFlow
               payroll — not a marketing estimate.
             </p>
           </div>
@@ -297,10 +297,10 @@ export default async function LandingPage() {
                 <div>
                   <div className="font-medium">Email</div>
                   <a
-                    href="mailto:payvolve@gmail.com"
+                    href="mailto:pondoflow@gmail.com"
                     className="text-zinc-500 hover:text-emerald-700"
                   >
-                    payvolve@gmail.com
+                    pondoflow@gmail.com
                   </a>
                 </div>
               </div>

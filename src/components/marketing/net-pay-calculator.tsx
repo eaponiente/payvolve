@@ -9,7 +9,7 @@ import { phpFormat, round2 } from "@/lib/payroll/money";
 
 /**
  * Live take-home pay calculator powered by the same statutory engine that
- * runs Payvolve payroll — SSS 2025, PhilHealth 5%, Pag-IBIG, BIR TRAIN table.
+ * runs PondoFlow payroll — SSS 2025, PhilHealth 5%, Pag-IBIG, BIR TRAIN table.
  */
 export function NetPayCalculator() {
   const [salary, setSalary] = useState(25_000);
@@ -103,7 +103,7 @@ export function NetPayCalculator() {
           </div>
         </div>
         <p className="mt-6 text-xs leading-relaxed text-emerald-100/80">
-          Computed with the exact same engine Payvolve uses for real payroll: SSS
+          Computed with the exact same engine PondoFlow uses for real payroll: SSS
           2025 table, PhilHealth 5%, Pag-IBIG, and the BIR TRAIN withholding
           table. Estimates exclude overtime, night differential, and 13th month.
         </p>

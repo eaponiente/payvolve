@@ -1,6 +1,6 @@
 {
-  "name": "Payvolve — Payroll for PH Teams",
-  "short_name": "Payvolve",
+  "name": "PondoFlow — Payroll for PH Teams",
+  "short_name": "PondoFlow",
   "description": "Automated payroll, attendance, and payslips for Philippine businesses.",
   "start_url": "/dashboard",
   "display": "standalone",

@@ -1,4 +1,4 @@
-# Payvolve — Payroll Core MVP
+# PondoFlow — Payroll Core MVP
 
 A multi-tenant payroll web app for Philippine businesses: employees → time & attendance → semi-monthly payroll runs with real PH statutory deductions → payslips and BIR-friendly CSV exports.
 
@@ -24,8 +24,8 @@ A multi-tenant payroll web app for Philippine businesses: employees → time & a
 
 ```bash
 # 1. Postgres (Docker)
-docker run -d --name payvolve-pg -e POSTGRES_USER=payvolve -e POSTGRES_PASSWORD=payvolve \
-  -e POSTGRES_DB=payvolve -p 5433:5432 postgres:16-alpine
+docker run -d --name pondoflow-pg -e POSTGRES_USER=pondoflow -e POSTGRES_PASSWORD=pondoflow \
+  -e POSTGRES_DB=pondoflow -p 5433:5432 postgres:16-alpine
 
 # 2. Install, migrate, seed
 npm install
@@ -42,8 +42,8 @@ npm run dev
 
 | Role | Email | Password |
 |---|---|---|
-| Owner | `owner@demo.payvolve` | `password123` |
-| Employee | `maria@demo.payvolve` | `password123` |
+| Owner | `owner@demo.pondoflow` | `password123` |
+| Employee | `maria@demo.pondoflow` | `password123` |
 
 The seed creates **Kanto Kitchen Inc.** with 4 employees and two weeks of time entries (including overtime and night shifts) for the previous cutoff — create a payroll run with the pre-filled default period to see it end-to-end.
 

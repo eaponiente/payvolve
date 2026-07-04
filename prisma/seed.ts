@@ -41,7 +41,7 @@ async function main() {
     data: {
       name: "Kanto Kitchen Inc.",
       users: {
-        create: { email: "owner@demo.payvolve", passwordHash, role: "OWNER" },
+        create: { email: "owner@demo.pondoflow", passwordHash, role: "OWNER" },
       },
       subscription: {
         create: {
@@ -62,7 +62,7 @@ async function main() {
         position: "Restaurant Manager",
         payType: "MONTHLY" as const,
         baseRate: 25_000,
-        email: "maria@demo.payvolve",
+        email: "maria@demo.pondoflow",
       },
       {
         firstName: "Jose",
@@ -166,7 +166,7 @@ async function main() {
   await prisma.shift.createMany({ data: shifts });
 
   console.log(
-    `Seeded ${company.name}: owner@demo.payvolve / maria@demo.payvolve (password: password123), ` +
+    `Seeded ${company.name}: owner@demo.pondoflow / maria@demo.pondoflow (password: password123), ` +
       `${employees.length} employees, ${entries.length} time entries for ` +
       `${period.start.toDateString()} – ${period.end.toDateString()}, ` +
       `${shifts.length} shifts for the week of ${week.start.toDateString()}.`,
