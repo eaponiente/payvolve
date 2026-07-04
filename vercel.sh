@@ -4,6 +4,10 @@ set -euo pipefail
 # Deploy this Next.js + Prisma app to Vercel.
 # Requires: DATABASE_URL and AUTH_SECRET to be set in the environment
 # (or in a .env file loaded before running this script).
+#
+# DATABASE_URL from the local environment is pushed to Vercel's project env
+# vars (replacing whatever is already there) so the database that migrations
+# are applied to always matches the database the deployed app connects to.
 
 if ! command -v vercel &>/dev/null; then
   echo "Error: Vercel CLI is not installed. Install it with: npm i -g vercel" >&2
@@ -37,6 +41,15 @@ if [ "$NO_LINK" = false ] && [ ! -d .vercel ]; then
   echo "→ Linking to Vercel project (interactive)"
   vercel link
 fi
+
+TARGET_ENV="production"
+if [ "$PROD" = false ]; then
+  TARGET_ENV="preview"
+fi
+
+echo "→ Syncing DATABASE_URL to Vercel (${TARGET_ENV})"
+vercel env rm DATABASE_URL "$TARGET_ENV" --yes >/dev/null 2>&1 || true
+printf '%s' "$DATABASE_URL" | vercel env add DATABASE_URL "$TARGET_ENV"
 
 echo "→ Applying pending migrations to target database"
 npx prisma migrate deploy
