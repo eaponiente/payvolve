@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/tenant";
+import { getEntitlement, LOCKED_MESSAGE } from "@/lib/billing/subscription";
 import type { FormState } from "@/lib/actions/auth-actions";
 
 const shiftSchema = z.object({
@@ -26,6 +27,9 @@ export async function createShift(
   formData: FormData,
 ): Promise<FormState> {
   const user = await requireAdmin();
+  if (!(await getEntitlement(user.companyId)).entitled) {
+    return { error: LOCKED_MESSAGE };
+  }
   const parsed = shiftSchema.safeParse({
     employeeId: formData.get("employeeId"),
     dates: formData.getAll("dates"),
@@ -60,6 +64,7 @@ export async function createShift(
 /** Admin: remove a scheduled shift. */
 export async function deleteShift(shiftId: string): Promise<void> {
   const user = await requireAdmin();
+  if (!(await getEntitlement(user.companyId)).entitled) return;
   await prisma.shift.deleteMany({
     where: { id: shiftId, companyId: user.companyId },
   });

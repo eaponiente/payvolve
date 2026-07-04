@@ -11,6 +11,7 @@ import {
   toDateKey,
   weekOf,
 } from "@/lib/schedule/week";
+import { getEntitlement } from "@/lib/billing/subscription";
 import { Badge, ButtonLink, Card, PageHeader, Td, Th } from "@/components/ui";
 import { ShiftForm } from "@/components/shift-form";
 
@@ -96,6 +97,7 @@ export default async function SchedulePage({
   }
 
   // ---- Admin view: weekly grid (crew × days)
+  const { entitled } = await getEntitlement(user.companyId);
   const [employees, shifts] = await Promise.all([
     prisma.employee.findMany({
       where: { companyId: user.companyId, active: true },
@@ -121,18 +123,20 @@ export default async function SchedulePage({
         action={weekNav}
       />
 
-      <div className="mb-6">
-        <ShiftForm
-          employees={employees.map((e) => ({
-            id: e.id,
-            name: `${e.lastName}, ${e.firstName}`,
-          }))}
-          weekDays={week.days.map((d, i) => ({
-            value: toDateKey(d),
-            label: `${DAY_LABELS[i]} ${dayNumFmt.format(d)}`,
-          }))}
-        />
-      </div>
+      {entitled && (
+        <div className="mb-6">
+          <ShiftForm
+            employees={employees.map((e) => ({
+              id: e.id,
+              name: `${e.lastName}, ${e.firstName}`,
+            }))}
+            weekDays={week.days.map((d, i) => ({
+              value: toDateKey(d),
+              label: `${DAY_LABELS[i]} ${dayNumFmt.format(d)}`,
+            }))}
+          />
+        </div>
+      )}
 
       <Card className="overflow-x-auto">
         <table className="w-full min-w-[900px] table-fixed">
@@ -170,11 +174,13 @@ export default async function SchedulePage({
                             {s.role && (
                               <div className="text-emerald-700">{s.role}</div>
                             )}
-                            <form action={deleteShift.bind(null, s.id)}>
-                              <button className="mt-0.5 text-[11px] text-red-600 opacity-0 transition-opacity hover:underline group-hover:opacity-100">
-                                Remove
-                              </button>
-                            </form>
+                            {entitled && (
+                              <form action={deleteShift.bind(null, s.id)}>
+                                <button className="mt-0.5 text-[11px] text-red-600 opacity-0 transition-opacity hover:underline group-hover:opacity-100">
+                                  Remove
+                                </button>
+                              </form>
+                            )}
                           </div>
                         ))}
                       </div>

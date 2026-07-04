@@ -33,3 +33,19 @@ export function isEntitled(sub: {
   }
   return false;
 }
+
+export type Entitlement = {
+  entitled: boolean;
+  status: string;
+  trialEndsAt: Date | null;
+};
+
+/** Resolve a company's current entitlement (used by pages, the layout, and action guards). */
+export async function getEntitlement(companyId: string): Promise<Entitlement> {
+  const sub = await getOrCreateSubscription(companyId);
+  return { entitled: isEntitled(sub), status: sub.status, trialEndsAt: sub.trialEndsAt };
+}
+
+/** Shown when a locked write action is attempted. */
+export const LOCKED_MESSAGE =
+  "This company's subscription has lapsed. An owner must reactivate it in Billing to unlock scheduling and payroll.";

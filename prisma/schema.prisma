@@ -186,6 +186,16 @@ model Subscription {
   updatedAt          DateTime           @updatedAt
 }
 
+// In-app bug reports. Cross-tenant; visible only to platform devs.
+model BugReport {
+  id            String   @id @default(cuid())
+  name          String
+  feedback      String
+  reporterEmail String   @default("")
+  companyId     String?
+  createdAt     DateTime @default(now())
+}
+
 // Public "Contact us" submissions from the marketing site (no tenant).
 model ContactMessage {
   id        String   @id @default(cuid())

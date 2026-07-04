@@ -2,8 +2,12 @@ import "dotenv/config";
 import bcrypt from "bcryptjs";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { previousSemiMonthlyPeriod } from "../src/lib/payroll/period";
+import {
+  previousSemiMonthlyPeriod,
+  semiMonthlyPeriodFor,
+} from "../src/lib/payroll/period";
 import { weekOf } from "../src/lib/schedule/week";
+import { buildSampleAttendance } from "../src/lib/attendance/sample";
 
 const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
@@ -113,40 +117,17 @@ async function main() {
     ),
   );
 
-  // Time entries covering the previous cutoff so a payroll run works out of the box.
+  // Varied attendance (absences, lates, undertime, overtime, night shifts) for
+  // the previous cutoff (drives payroll) and the elapsed part of the current
+  // cutoff (shows on the timesheet).
   const period = previousSemiMonthlyPeriod(new Date());
-  const entries: {
-    employeeId: string;
-    clockIn: Date;
-    clockOut: Date;
-  }[] = [];
-
-  const day = new Date(period.start);
-  while (day <= period.end) {
-    const weekday = day.getDay();
-    if (weekday !== 0) {
-      // closed Sundays
-      for (const [i, employee] of employees.entries()) {
-        // Everyone works; stagger shifts a bit per employee
-        const start = new Date(day);
-        const end = new Date(day);
-        if (i === 1) {
-          // Head cook: 14:00–24:00 (2h OT + 2h night diff)
-          start.setHours(14, 0, 0, 0);
-          end.setHours(24, 0, 0, 0);
-        } else if (i === 3 && weekday === 6) {
-          // Barista pulls a long Saturday: 08:00–18:00 (2h OT)
-          start.setHours(8, 0, 0, 0);
-          end.setHours(18, 0, 0, 0);
-        } else {
-          start.setHours(9, 0, 0, 0);
-          end.setHours(17, 0, 0, 0);
-        }
-        entries.push({ employeeId: employee.id, clockIn: start, clockOut: end });
-      }
-    }
-    day.setDate(day.getDate() + 1);
-  }
+  const current = semiMonthlyPeriodFor(new Date());
+  const now = new Date();
+  const currentEnd = now < current.end ? now : current.end;
+  const entries = [
+    ...buildSampleAttendance(employees, period),
+    ...buildSampleAttendance(employees, { start: current.start, end: currentEnd }),
+  ];
 
   await prisma.timeEntry.createMany({
     data: entries.map((e) => ({ ...e, source: "CLOCK" as const })),
