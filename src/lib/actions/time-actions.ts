@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireAdmin, requireUser } from "@/lib/tenant";
+import { getEntitlement, LOCKED_MESSAGE } from "@/lib/billing/subscription";
 import type { FormState } from "@/lib/actions/auth-actions";
 
 async function openEntryFor(employeeId: string) {
@@ -17,6 +18,7 @@ async function openEntryFor(employeeId: string) {
 export async function clockIn(): Promise<void> {
   const user = await requireUser();
   if (!user.employeeId) return;
+  if (!(await getEntitlement(user.companyId)).entitled) return;
   const open = await openEntryFor(user.employeeId);
   if (open) return; // already clocked in
   await prisma.timeEntry.create({
@@ -30,6 +32,7 @@ export async function clockIn(): Promise<void> {
 export async function clockOut(): Promise<void> {
   const user = await requireUser();
   if (!user.employeeId) return;
+  if (!(await getEntitlement(user.companyId)).entitled) return;
   const open = await openEntryFor(user.employeeId);
   if (!open) return;
   await prisma.timeEntry.update({
@@ -53,6 +56,9 @@ export async function addManualEntry(
   formData: FormData,
 ): Promise<FormState> {
   const user = await requireAdmin();
+  if (!(await getEntitlement(user.companyId)).entitled) {
+    return { error: LOCKED_MESSAGE };
+  }
   const parsed = manualEntrySchema.safeParse({
     employeeId: formData.get("employeeId"),
     date: formData.get("date"),
@@ -81,6 +87,7 @@ export async function addManualEntry(
 /** Admin: remove a time entry. */
 export async function deleteEntry(entryId: string): Promise<void> {
   const user = await requireAdmin();
+  if (!(await getEntitlement(user.companyId)).entitled) return;
   await prisma.timeEntry.deleteMany({
     where: { id: entryId, employee: { companyId: user.companyId } },
   });

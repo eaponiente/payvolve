@@ -4,6 +4,9 @@ import type { ReactNode } from "react";
 import { requireUser, isAdmin } from "@/lib/tenant";
 import { prisma } from "@/lib/db";
 import { logout } from "@/lib/actions/auth-actions";
+import { getEntitlement } from "@/lib/billing/subscription";
+import { currentUserIsDev } from "@/lib/dev";
+import { BugReportDialog } from "@/components/bug-report-dialog";
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const user = await requireUser();
@@ -14,6 +17,9 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   // Session references a company that no longer exists (e.g. after a DB reset):
   // bounce to login for a fresh session instead of throwing a 500.
   if (!company) redirect("/login");
+
+  const { entitled } = await getEntitlement(user.companyId);
+  const isDev = await currentUserIsDev(user.id);
 
   const nav = isAdmin(user)
     ? [
@@ -32,6 +38,8 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         { href: "/time", label: "Time" },
         { href: "/payslips", label: "Payslips" },
       ];
+
+  if (isDev) nav.push({ href: "/dev/bug-reports", label: "Bug reports" });
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -77,7 +85,33 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           ))}
         </nav>
       </header>
+      {!entitled && (
+        <div className="no-print border-b border-amber-200 bg-amber-50">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-2.5 text-sm text-amber-800">
+            <span>
+              <strong>Subscription inactive.</strong> Scheduling and payroll are
+              locked, and time tracking is read-only.
+            </span>
+            {user.role === "OWNER" ? (
+              <Link
+                href="/billing"
+                className="rounded-lg bg-amber-600 px-3 py-1 font-semibold text-white hover:bg-amber-700"
+              >
+                Reactivate →
+              </Link>
+            ) : (
+              <span className="text-amber-600">Ask an owner to reactivate.</span>
+            )}
+          </div>
+        </div>
+      )}
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">{children}</main>
+      <footer className="no-print border-t border-zinc-200 bg-white">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-4 text-sm text-zinc-400">
+          <span>© {new Date().getFullYear()} Payvolve</span>
+          <BugReportDialog />
+        </div>
+      </footer>
     </div>
   );
 }

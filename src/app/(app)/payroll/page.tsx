@@ -3,10 +3,12 @@ import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/tenant";
 import { phpFormat } from "@/lib/payroll/money";
 import { formatPeriod } from "@/lib/payroll/period";
+import { getEntitlement } from "@/lib/billing/subscription";
 import { Badge, ButtonLink, Card, PageHeader, Td, Th } from "@/components/ui";
 
 export default async function PayrollPage() {
   const user = await requireAdmin();
+  const { entitled } = await getEntitlement(user.companyId);
   const runs = await prisma.payrollRun.findMany({
     where: { companyId: user.companyId },
     orderBy: { periodStart: "desc" },
@@ -17,7 +19,15 @@ export default async function PayrollPage() {
     <>
       <PageHeader
         title="Payroll runs"
-        action={<ButtonLink href="/payroll/new">New payroll run</ButtonLink>}
+        action={
+          entitled ? (
+            <ButtonLink href="/payroll/new">New payroll run</ButtonLink>
+          ) : (
+            <ButtonLink href="/billing" variant="secondary">
+              Reactivate to run payroll
+            </ButtonLink>
+          )
+        }
       />
       <Card className="overflow-x-auto">
         <table className="w-full min-w-[640px]">

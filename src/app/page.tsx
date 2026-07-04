@@ -297,10 +297,10 @@ export default async function LandingPage() {
                 <div>
                   <div className="font-medium">Email</div>
                   <a
-                    href="mailto:hello@payvolve.ph"
+                    href="mailto:payvolve@gmail.com"
                     className="text-zinc-500 hover:text-emerald-700"
                   >
-                    hello@payvolve.ph
+                    payvolve@gmail.com
                   </a>
                 </div>
               </div>
@@ -310,7 +310,7 @@ export default async function LandingPage() {
                 </span>
                 <div>
                   <div className="font-medium">Office</div>
-                  <div className="text-zinc-500">Bonifacio Global City, Taguig, Metro Manila</div>
+                  <div className="text-zinc-500">Davao City</div>
                 </div>
               </div>
               <div className="flex items-center gap-3">

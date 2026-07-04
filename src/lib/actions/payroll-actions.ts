@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/tenant";
+import { getEntitlement, LOCKED_MESSAGE } from "@/lib/billing/subscription";
 import type { FormState } from "@/lib/actions/auth-actions";
 import {
   computeSemiMonthlyPayslip,
@@ -120,6 +121,9 @@ export async function createPayrollRun(
   formData: FormData,
 ): Promise<FormState> {
   const user = await requireAdmin();
+  if (!(await getEntitlement(user.companyId)).entitled) {
+    return { error: LOCKED_MESSAGE };
+  }
   const parsed = runSchema.safeParse({
     type: formData.get("type"),
     periodStart: formData.get("periodStart"),
@@ -166,6 +170,7 @@ async function draftRunOrNull(runId: string, companyId: string) {
 /** Recompute a draft run's payslips from current time entries and rates. */
 export async function recomputeRun(runId: string): Promise<void> {
   const user = await requireAdmin();
+  if (!(await getEntitlement(user.companyId)).entitled) return;
   const run = await draftRunOrNull(runId, user.companyId);
   if (!run) return;
 
@@ -190,6 +195,7 @@ export async function recomputeRun(runId: string): Promise<void> {
 /** Finalize a draft run, locking its payslips. */
 export async function finalizeRun(runId: string): Promise<void> {
   const user = await requireAdmin();
+  if (!(await getEntitlement(user.companyId)).entitled) return;
   await prisma.payrollRun.updateMany({
     where: { id: runId, companyId: user.companyId, status: "DRAFT" },
     data: { status: "FINALIZED", finalizedAt: new Date() },
