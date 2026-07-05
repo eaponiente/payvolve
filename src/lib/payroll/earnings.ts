@@ -67,7 +67,13 @@ export function computeEarnings(input: EarningsInput): EarningsResult {
   }
 
   const overtimePay = hours.overtimeHours * hourlyRate * OVERTIME_MULTIPLIER;
-  const nightDiffPay = hours.nightDiffHours * hourlyRate * NIGHT_DIFF_RATE;
+  // Night differential on overtime hours is 10% of the OT rate (Art. 86),
+  // i.e. 12.5% of the base hourly rate, not a flat 10% for all night hours.
+  const nightRegularPay =
+    (hours.nightDiffHours - hours.nightOvertimeHours) * hourlyRate * NIGHT_DIFF_RATE;
+  const nightOvertimePay =
+    hours.nightOvertimeHours * hourlyRate * OVERTIME_MULTIPLIER * NIGHT_DIFF_RATE;
+  const nightDiffPay = nightRegularPay + nightOvertimePay;
 
   return {
     basicPay: round2(basicPay),

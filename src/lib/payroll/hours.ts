@@ -16,6 +16,8 @@ export type HoursSummary = {
   regularHours: number;
   overtimeHours: number;
   nightDiffHours: number;
+  /** Night hours that also fall within overtime hours for their day. */
+  nightOvertimeHours: number;
   daysWorked: number;
 };
 
@@ -70,16 +72,22 @@ export function summarizeHours(
   let regular = 0;
   let overtime = 0;
   let night = 0;
+  let nightOvertime = 0;
   for (const day of byDay.values()) {
+    const dayOvertime = Math.max(0, day.worked - workHoursPerDay);
     regular += Math.min(day.worked, workHoursPerDay);
-    overtime += Math.max(0, day.worked - workHoursPerDay);
+    overtime += dayOvertime;
     night += day.night;
+    // Approximate the night/overtime overlap for the day: whichever of the
+    // two is smaller is fully contained within the other's span.
+    nightOvertime += Math.min(day.night, dayOvertime);
   }
 
   return {
     regularHours: regular,
     overtimeHours: overtime,
     nightDiffHours: night,
+    nightOvertimeHours: nightOvertime,
     daysWorked: byDay.size,
   };
 }

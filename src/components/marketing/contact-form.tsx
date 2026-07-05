@@ -25,6 +25,16 @@ export function ContactForm() {
 
   return (
     <form action={action} className="space-y-4">
+      {/* Honeypot: hidden from real visitors via CSS + tabIndex; bots that
+          fill every field will trip it. See sendContactMessage. */}
+      <input
+        type="text"
+        name="website"
+        tabIndex={-1}
+        autoComplete="off"
+        style={{ display: "none" }}
+        aria-hidden="true"
+      />
       <div className="grid gap-4 sm:grid-cols-2">
         <input name="name" required placeholder="Your name" className={inputCls} aria-label="Your name" />
         <input

@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
+import { requireDev } from "@/lib/dev";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  await requireDev();
+
   const url = process.env.DATABASE_URL ?? null;
 
   let databaseUrlHost: string | null = null;

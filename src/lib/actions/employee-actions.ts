@@ -22,6 +22,10 @@ const employeeSchema = z.object({
   active: z.coerce.boolean().default(true),
 });
 
+/** Marks an intentional, user-facing validation failure raised inside the
+ * transaction, so the catch block doesn't leak a raw Prisma error message. */
+class DuplicateEmailError extends Error {}
+
 function parseEmployeeForm(formData: FormData) {
   return employeeSchema.safeParse({
     firstName: formData.get("firstName"),
@@ -49,27 +53,40 @@ export async function createEmployee(
   // Optional self-service account
   const email = String(formData.get("accountEmail") ?? "").trim().toLowerCase();
   const password = String(formData.get("accountPassword") ?? "");
-  let userId: string | undefined;
-  if (email) {
-    if (password.length < 8) {
-      return { error: "Account password must be at least 8 characters" };
-    }
-    const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) return { error: "An account with this email already exists" };
-    const account = await prisma.user.create({
-      data: {
-        email,
-        passwordHash: await bcrypt.hash(password, 10),
-        role: "EMPLOYEE",
-        companyId: user.companyId,
-      },
-    });
-    userId = account.id;
+  if (email && password.length < 8) {
+    return { error: "Account password must be at least 8 characters" };
   }
 
-  await prisma.employee.create({
-    data: { ...parsed.data, companyId: user.companyId, userId },
-  });
+  try {
+    // Create the (optional) login account and the employee record together
+    // so a failure partway through can't leave an orphaned user with no
+    // employee, or vice versa.
+    await prisma.$transaction(async (tx) => {
+      let userId: string | undefined;
+      if (email) {
+        const existing = await tx.user.findUnique({ where: { email } });
+        if (existing) {
+          throw new DuplicateEmailError("An account with this email already exists");
+        }
+        const account = await tx.user.create({
+          data: {
+            email,
+            passwordHash: await bcrypt.hash(password, 10),
+            role: "EMPLOYEE",
+            companyId: user.companyId,
+          },
+        });
+        userId = account.id;
+      }
+
+      await tx.employee.create({
+        data: { ...parsed.data, companyId: user.companyId, userId },
+      });
+    });
+  } catch (err) {
+    if (err instanceof DuplicateEmailError) return { error: err.message };
+    throw err;
+  }
 
   revalidatePath("/employees");
   redirect("/employees");

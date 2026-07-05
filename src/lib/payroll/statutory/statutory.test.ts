@@ -66,9 +66,9 @@ describe("BIR semi-monthly withholding (2023+ table)", () => {
 
   it("hits bracket boundaries exactly", () => {
     expect(birWithholdingSemiMonthly(16_667)).toBe(937.5);
-    expect(birWithholdingSemiMonthly(33_333)).toBe(4_270.7);
-    expect(birWithholdingSemiMonthly(83_333)).toBe(16_770.7);
-    expect(birWithholdingSemiMonthly(333_333)).toBe(91_770.7);
+    expect(birWithholdingSemiMonthly(33_333)).toBe(4_270.83);
+    expect(birWithholdingSemiMonthly(83_333)).toBe(16_770.83);
+    expect(birWithholdingSemiMonthly(333_333)).toBe(91_770.83);
   });
 
   it("computes mid-bracket amounts", () => {

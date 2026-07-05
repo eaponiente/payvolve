@@ -16,6 +16,11 @@ const signupSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
+const loginSchema = z.object({
+  email: z.string().trim().toLowerCase().email("Enter a valid email"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});
+
 export async function signup(
   _prev: FormState,
   formData: FormData,
@@ -56,10 +61,18 @@ export async function login(
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> {
+  const parsed = loginSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
+  }
+
   try {
     await signIn("credentials", {
-      email: formData.get("email"),
-      password: formData.get("password"),
+      email: parsed.data.email,
+      password: parsed.data.password,
       redirectTo: "/dashboard",
     });
   } catch (err) {

@@ -58,12 +58,14 @@ export async function subscribe(): Promise<void> {
 }
 
 /** Pay an OPEN invoice (e.g. a past-due renewal). */
-export async function payInvoice(invoiceId: string): Promise<void> {
+export async function payInvoice(
+  invoiceId: string,
+): Promise<{ error?: string } | undefined> {
   const user = await requireOwner();
   const invoice = await prisma.invoice.findFirst({
     where: { id: invoiceId, companyId: user.companyId, status: "OPEN" },
   });
-  if (!invoice) return;
+  if (!invoice) return { error: "Invoice not found or already paid" };
 
   await chargeCustomer(user.companyId, Number(invoice.total));
   await prisma.$transaction([

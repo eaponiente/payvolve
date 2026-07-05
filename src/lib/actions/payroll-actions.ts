@@ -193,23 +193,33 @@ export async function recomputeRun(runId: string): Promise<void> {
 }
 
 /** Finalize a draft run, locking its payslips. */
-export async function finalizeRun(runId: string): Promise<void> {
+export async function finalizeRun(
+  runId: string,
+): Promise<{ error?: string } | undefined> {
   const user = await requireAdmin();
   if (!(await getEntitlement(user.companyId)).entitled) return;
-  await prisma.payrollRun.updateMany({
+  const result = await prisma.payrollRun.updateMany({
     where: { id: runId, companyId: user.companyId, status: "DRAFT" },
     data: { status: "FINALIZED", finalizedAt: new Date() },
   });
+  if (result.count === 0) {
+    return { error: "Run not found, already finalized, or belongs to another company" };
+  }
   revalidatePath(`/payroll/${runId}`);
   revalidatePath("/payroll");
 }
 
 /** Delete a draft run (finalized runs are immutable). */
-export async function deleteRun(runId: string): Promise<void> {
+export async function deleteRun(
+  runId: string,
+): Promise<{ error?: string } | undefined> {
   const user = await requireAdmin();
-  await prisma.payrollRun.deleteMany({
+  const result = await prisma.payrollRun.deleteMany({
     where: { id: runId, companyId: user.companyId, status: "DRAFT" },
   });
+  if (result.count === 0) {
+    return { error: "Run not found, already finalized, or belongs to another company" };
+  }
   revalidatePath("/payroll");
   redirect("/payroll");
 }

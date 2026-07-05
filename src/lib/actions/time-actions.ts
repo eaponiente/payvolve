@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
+import { Prisma } from "@/generated/prisma/client";
 import { requireAdmin, requireUser } from "@/lib/tenant";
 import { getEntitlement, LOCKED_MESSAGE } from "@/lib/billing/subscription";
 import type { FormState } from "@/lib/actions/auth-actions";
@@ -21,9 +22,20 @@ export async function clockIn(): Promise<void> {
   if (!(await getEntitlement(user.companyId)).entitled) return;
   const open = await openEntryFor(user.employeeId);
   if (open) return; // already clocked in
-  await prisma.timeEntry.create({
-    data: { employeeId: user.employeeId, clockIn: new Date(), source: "CLOCK" },
-  });
+
+  try {
+    await prisma.timeEntry.create({
+      data: { employeeId: user.employeeId, clockIn: new Date(), source: "CLOCK" },
+    });
+  } catch (err) {
+    // Two simultaneous clock-ins can both pass the check above; the DB's
+    // partial unique index (one open entry per employee) rejects the loser.
+    // Treat that the same as "already clocked in" rather than a hard error.
+    const isDuplicateOpenEntry =
+      err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002";
+    if (!isDuplicateOpenEntry) throw err;
+  }
+
   revalidatePath("/time");
   revalidatePath("/dashboard");
 }
