@@ -15,9 +15,9 @@ export const BIR_SEMI_MONTHLY_BRACKETS: Bracket[] = [
   { over: 0, base: 0, rate: 0 },
   { over: 10_417, base: 0, rate: 0.15 },
   { over: 16_667, base: 937.5, rate: 0.2 },
-  { over: 33_333, base: 4_270.7, rate: 0.25 },
-  { over: 83_333, base: 16_770.7, rate: 0.3 },
-  { over: 333_333, base: 91_770.7, rate: 0.35 },
+  { over: 33_333, base: 4_270.83, rate: 0.25 },
+  { over: 83_333, base: 16_770.83, rate: 0.3 },
+  { over: 333_333, base: 91_770.83, rate: 0.35 },
 ];
 
 /** Withholding tax for one semi-monthly period. */

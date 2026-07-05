@@ -56,4 +56,39 @@ describe("summarizeHours", () => {
     expect(s.daysWorked).toBe(0);
     expect(s.regularHours).toBe(0);
   });
+
+  it("reports zero night-overtime overlap when there is no overtime", () => {
+    const s = summarizeHours(
+      [{ clockIn: d("2026-06-01T18:00"), clockOut: d("2026-06-02T00:00") }], // 6h, all regular
+      8,
+    );
+    expect(s.overtimeHours).toBe(0);
+    expect(s.nightDiffHours).toBe(2); // 22:00–00:00
+    expect(s.nightOvertimeHours).toBe(0);
+  });
+
+  it("counts night hours that fall within overtime as night-overtime", () => {
+    // 14:00 → 00:00 (10h): 8h regular, 2h OT (22:00–00:00), which is also
+    // entirely within the night window — fully overlapping.
+    const s = summarizeHours(
+      [{ clockIn: d("2026-06-01T14:00"), clockOut: d("2026-06-02T00:00") }],
+      8,
+    );
+    expect(s.overtimeHours).toBe(2);
+    expect(s.nightDiffHours).toBe(2);
+    expect(s.nightOvertimeHours).toBe(2);
+  });
+
+  it("splits night hours between regular and overtime when only part overlaps", () => {
+    // 12:00 → 23:00 (11h): 8h regular, 3h OT (20:00–23:00). Night hours are
+    // 22:00–23:00 (1h), which falls entirely within the 3h OT window, but
+    // OT itself (3h) exceeds the night hours (1h) — so all 1h of night is OT.
+    const s = summarizeHours(
+      [{ clockIn: d("2026-06-01T12:00"), clockOut: d("2026-06-01T23:00") }],
+      8,
+    );
+    expect(s.overtimeHours).toBe(3);
+    expect(s.nightDiffHours).toBe(1);
+    expect(s.nightOvertimeHours).toBe(1);
+  });
 });

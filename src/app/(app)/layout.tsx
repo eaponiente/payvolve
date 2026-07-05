@@ -39,7 +39,10 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         { href: "/payslips", label: "Payslips" },
       ];
 
-  if (isDev) nav.push({ href: "/dev/bug-reports", label: "Bug reports" });
+  if (isDev) {
+    nav.push({ href: "/dev/bug-reports", label: "Bug reports" });
+    nav.push({ href: "/dev/contact-messages", label: "Messages" });
+  }
 
   return (
     <div className="flex min-h-screen flex-col">

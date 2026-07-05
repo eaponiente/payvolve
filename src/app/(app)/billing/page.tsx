@@ -165,7 +165,12 @@ export default async function BillingPage() {
                 </Td>
                 <Td className="text-right">
                   {inv.status === "OPEN" && (
-                    <form action={payInvoice.bind(null, inv.id)}>
+                    <form
+                      action={async () => {
+                        "use server";
+                        await payInvoice(inv.id);
+                      }}
+                    >
                       <button className="text-sm font-medium text-emerald-700 hover:underline">
                         Pay now
                       </button>

@@ -53,13 +53,23 @@ export default async function PayrollRunPage({
             {isDraft ? (
               entitled ? (
                 <>
-                  <form action={deleteRun.bind(null, run.id)}>
+                  <form
+                    action={async () => {
+                      "use server";
+                      await deleteRun(run.id);
+                    }}
+                  >
                     <Button variant="danger">Delete draft</Button>
                   </form>
                   <form action={recomputeRun.bind(null, run.id)}>
                     <Button variant="secondary">Recompute</Button>
                   </form>
-                  <form action={finalizeRun.bind(null, run.id)}>
+                  <form
+                    action={async () => {
+                      "use server";
+                      await finalizeRun(run.id);
+                    }}
+                  >
                     <Button>Finalize run</Button>
                   </form>
                 </>

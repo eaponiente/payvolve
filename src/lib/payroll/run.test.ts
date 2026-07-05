@@ -53,8 +53,10 @@ describe("computeSemiMonthlyPayslip — known answers", () => {
     const byLabel = Object.fromEntries(slip.earnings.map((x) => [x.label, x.amount]));
     expect(byLabel["Basic pay"]).toBe(10_400);
     expect(byLabel["Overtime (125%)"]).toBe(250); // 2h × 100 × 1.25
-    expect(byLabel["Night differential (10%)"]).toBe(20); // 2h × 100 × 0.10
-    expect(slip.gross).toBe(10_670);
+    // These 2h are also overtime, so night diff is 10% of the OT rate:
+    // 2h × 100 × 1.25 × 0.10 = 25 (not a flat 2h × 100 × 0.10 = 20).
+    expect(byLabel["Night differential (10%)"]).toBe(25);
+    expect(slip.gross).toBe(10_675);
   });
 
   it("pays daily-rate employees per day worked, min-wage-ish with no tax", () => {

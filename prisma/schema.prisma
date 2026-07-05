@@ -71,6 +71,9 @@ model User {
   companyId    String
   company      Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
   employee     Employee?
+  // Bumped to invalidate all previously-issued JWTs for this user (e.g. on
+  // role change or forced logout). Checked in the auth.ts jwt callback.
+  tokenVersion Int       @default(0)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
@@ -105,6 +108,11 @@ model Employee {
   @@index([companyId])
 }
 
+// NOTE: a partial unique index enforces at most one OPEN entry (clockOut IS
+// NULL) per employee, guarding against a clock-in race condition. Prisma's
+// schema DSL can't express partial indexes, so it's hand-written raw SQL in
+// migration 20260705103532_time_entry_open_unique — not represented here.
+// Don't let `prisma migrate dev`/`db push` schema-drift-reset it away.
 model TimeEntry {
   id         String          @id @default(cuid())
   employeeId String
