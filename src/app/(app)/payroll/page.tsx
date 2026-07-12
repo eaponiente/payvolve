@@ -58,7 +58,7 @@ export default async function PayrollPage() {
                   <Td className="text-right tabular-nums">{phpFormat(totalNet)}</Td>
                   <Td>
                     {run.status === "FINALIZED" ? (
-                      <Badge tone="emerald">Finalized </Badge>
+                      <Badge tone="emerald">Finalized</Badge>
                     ) : (
                       <Badge tone="amber">Draft</Badge>
                     )}
