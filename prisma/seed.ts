@@ -19,7 +19,6 @@ async function main() {
     where: { name: "Kanto Kitchen Inc." },
   });
   if (existing) {
-    console.log("Demo company already seeded — skipping.");
     return;
   }
 
@@ -167,13 +166,6 @@ async function main() {
     }
   }
   await prisma.shift.createMany({ data: shifts });
-
-  console.log(
-    `Seeded ${company.name}: owner@demo.pondoflow / maria@demo.pondoflow (password: password123), ` +
-      `${employees.length} employees, ${entries.length} time entries for ` +
-      `${period.start.toDateString()} – ${period.end.toDateString()}, ` +
-      `${shifts.length} shifts for the week of ${week.start.toDateString()}.`,
-  );
 }
 
 main().finally(() => prisma.$disconnect());
