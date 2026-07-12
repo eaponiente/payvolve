@@ -1,9 +1,9 @@
 "use server";
 
-import { headers } from "next/headers";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { rateLimit } from "@/lib/rate-limit";
+import { clientIp } from "@/lib/client-ip";
 
 export type ContactState = { error?: string; success?: boolean } | undefined;
 
@@ -17,13 +17,6 @@ const contactSchema = z.object({
     .min(10, "Tell us a bit more (at least 10 characters)")
     .max(2000, "Message is too long"),
 });
-
-async function clientIp(): Promise<string> {
-  const h = await headers();
-  const forwardedFor = h.get("x-forwarded-for");
-  if (forwardedFor) return forwardedFor.split(",")[0].trim();
-  return h.get("x-real-ip") ?? "unknown";
-}
 
 export async function sendContactMessage(
   _prev: ContactState,

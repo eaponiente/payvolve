@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/tenant";
+import { encryptGovIds } from "@/lib/crypto";
 import type { FormState } from "@/lib/actions/auth-actions";
 
 const employeeSchema = z.object({
@@ -80,7 +81,7 @@ export async function createEmployee(
       }
 
       await tx.employee.create({
-        data: { ...parsed.data, companyId: user.companyId, userId },
+        data: { ...encryptGovIds(parsed.data), companyId: user.companyId, userId },
       });
     });
   } catch (err) {
@@ -104,7 +105,7 @@ export async function updateEmployee(
   // updateMany so companyId is part of the filter — tenant isolation
   const result = await prisma.employee.updateMany({
     where: { id: employeeId, companyId: user.companyId },
-    data: parsed.data,
+    data: encryptGovIds(parsed.data),
   });
   if (result.count === 0) return { error: "Employee not found" };
 

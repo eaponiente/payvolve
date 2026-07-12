@@ -5,7 +5,11 @@ const faqs = [
   },
   {
     q: "How much does PondoFlow cost?",
-    a: "One simple plan: ₱999 per company per month plus ₱100 per active employee. The optional Earned Wage Access add-on is ₱100 per employee. Every company starts with a 14-day free trial — no credit card required.",
+    a: "One simple plan: ₱800 per company per month plus ₱100 per active employee. The optional Earned Wage Access add-on is ₱100 per employee. Every company starts with a 14-day free trial — no credit card required.",
+  },
+  {
+    q: "How do I pay for my subscription?",
+    a: "For now, payment is by bank transfer or GCash only — card and automatic billing are coming later. Start your 14-day free trial with no payment up front; when it ends, we'll send you the payment details and activate your plan as soon as we receive it.",
   },
   {
     q: "Can my employees clock in and out from their phones?",

@@ -22,12 +22,17 @@ export async function getOrCreateSubscription(companyId: string) {
   });
 }
 
-/** True when the company can use paid features (active, or still within trial). */
+/** True when the company can use paid features (active & paid-through, or still within trial). */
 export function isEntitled(sub: {
   status: string;
   trialEndsAt: Date | null;
+  currentPeriodEnd?: Date | null;
 }): boolean {
-  if (sub.status === "ACTIVE") return true;
+  if (sub.status === "ACTIVE") {
+    // Auto-lapse once the paid-through date passes. A missing end date is
+    // treated as open-ended so legacy/edge rows aren't locked out.
+    return !sub.currentPeriodEnd || sub.currentPeriodEnd.getTime() > Date.now();
+  }
   if (sub.status === "TRIALING") {
     return !sub.trialEndsAt || sub.trialEndsAt.getTime() > Date.now();
   }

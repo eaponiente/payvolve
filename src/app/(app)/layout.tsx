@@ -40,6 +40,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       ];
 
   if (isDev) {
+    nav.push({ href: "/dev/subscriptions", label: "Subscriptions" });
     nav.push({ href: "/dev/bug-reports", label: "Bug reports" });
     nav.push({ href: "/dev/contact-messages", label: "Messages" });
   }

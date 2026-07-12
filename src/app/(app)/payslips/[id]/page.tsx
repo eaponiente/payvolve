@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { isAdmin, requireUser } from "@/lib/tenant";
+import { decryptField } from "@/lib/crypto";
 import { phpFormat } from "@/lib/payroll/money";
 import { formatPeriod } from "@/lib/payroll/period";
 import type { BreakdownLine } from "@/lib/payroll/run";
@@ -45,6 +46,8 @@ export default async function PayslipPage({
     deductions: BreakdownLine[];
   };
   const run = payslip.payrollRun;
+  const tin = decryptField(payslip.employee.tin);
+  const sssNumber = decryptField(payslip.employee.sssNumber);
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -77,11 +80,9 @@ export default async function PayslipPage({
               {payslip.employee.firstName} {payslip.employee.lastName}
             </div>
             <div className="text-zinc-500">{payslip.employee.position || ""}</div>
-            {payslip.employee.tin && (
-              <div className="text-zinc-500">TIN: {payslip.employee.tin}</div>
-            )}
-            {payslip.employee.sssNumber && (
-              <div className="text-zinc-500">SSS: {payslip.employee.sssNumber}</div>
+            {tin && <div className="text-zinc-500">TIN: {tin}</div>}
+            {sssNumber && (
+              <div className="text-zinc-500">SSS: {sssNumber}</div>
             )}
           </div>
         </div>

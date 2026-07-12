@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
+import { decryptField } from "@/lib/crypto";
 import type { BreakdownLine } from "@/lib/payroll/run";
 import { toDateInputValue } from "@/lib/payroll/period";
 
@@ -55,10 +56,10 @@ export async function GET(
     const b = p.breakdown as { earnings: BreakdownLine[]; deductions: BreakdownLine[] };
     return [
       `${p.employee.lastName}, ${p.employee.firstName}`,
-      p.employee.tin,
-      p.employee.sssNumber,
-      p.employee.philhealthNumber,
-      p.employee.pagibigNumber,
+      decryptField(p.employee.tin),
+      decryptField(p.employee.sssNumber),
+      decryptField(p.employee.philhealthNumber),
+      decryptField(p.employee.pagibigNumber),
       earningOf(b.earnings, run.type === "REGULAR" ? "Basic pay" : "13th month pay"),
       earningOf(b.earnings, "Overtime (125%)"),
       earningOf(b.earnings, "Night differential (10%)"),

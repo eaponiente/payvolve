@@ -8,6 +8,7 @@ import {
 } from "../src/lib/payroll/period";
 import { weekOf } from "../src/lib/schedule/week";
 import { buildSampleAttendance } from "../src/lib/attendance/sample";
+import { encryptGovIds } from "../src/lib/crypto";
 
 const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
@@ -98,10 +99,12 @@ async function main() {
           hireDate: new Date(2025, 0, 15),
           payType: e.payType,
           baseRate: e.baseRate,
-          tin: "123-456-789-000",
-          sssNumber: "34-1234567-8",
-          philhealthNumber: "12-345678901-2",
-          pagibigNumber: "1234-5678-9012",
+          ...encryptGovIds({
+            tin: "123-456-789-000",
+            sssNumber: "34-1234567-8",
+            philhealthNumber: "12-345678901-2",
+            pagibigNumber: "1234-5678-9012",
+          }),
           user: e.email
             ? {
                 create: {

@@ -230,7 +230,7 @@ export default async function LandingPage() {
               One plan. No tiers, no surprises.
             </h2>
             <p className="mt-4 text-lg text-zinc-600">
-              <span className="font-bold text-zinc-900">₱999</span>/company +{" "}
+              <span className="font-bold text-zinc-900">₱800</span>/company +{" "}
               <span className="font-bold text-zinc-900">₱100</span>/employee per
               month. Everything included — payroll, scheduling, time tracking,
               payslips, and reports.
@@ -297,10 +297,10 @@ export default async function LandingPage() {
                 <div>
                   <div className="font-medium">Email</div>
                   <a
-                    href="mailto:pondoflow@gmail.com"
+                    href="mailto:support@pondoflow.com"
                     className="text-zinc-500 hover:text-emerald-700"
                   >
-                    pondoflow@gmail.com
+                    support@pondoflow.com
                   </a>
                 </div>
               </div>

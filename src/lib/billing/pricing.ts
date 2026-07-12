@@ -2,13 +2,13 @@ import { round2 } from "@/lib/payroll/money";
 
 /**
  * PondoFlow subscription pricing:
- * - Base platform fee: ₱999 / company / month
+ * - Base platform fee: ₱800 / company / month
  * - Per active employee: ₱100 / month
  * - Earned Wage Access add-on (optional): ₱100 / active employee / month
  *
  * Billing is usage-based on the company's active headcount for the period.
  */
-export const BASE_FEE = 999;
+export const BASE_FEE = 800;
 export const PER_EMPLOYEE_FEE = 100;
 export const EWA_PER_EMPLOYEE_FEE = 100;
 export const TRIAL_DAYS = 14;

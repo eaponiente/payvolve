@@ -8,7 +8,7 @@ import { Faq } from "@/components/marketing/faq";
 export const metadata: Metadata = {
   title: "Pricing — PondoFlow",
   description:
-    "One simple plan: ₱999/company + ₱100/employee per month. 14-day free trial, no credit card.",
+    "One simple plan: ₱800/company + ₱100/employee per month. 14-day free trial, no credit card.",
 };
 
 const included = [
@@ -76,7 +76,7 @@ export default function PricingPage() {
               </span>
             </div>
             <div className="mt-6 flex items-baseline gap-2">
-              <span className="text-5xl font-bold tracking-tight">₱999</span>
+              <span className="text-5xl font-bold tracking-tight">₱800</span>
               <span className="text-zinc-500">/company/month</span>
             </div>
             <div className="mt-1 text-lg font-medium text-zinc-700">
@@ -97,6 +97,11 @@ export default function PricingPage() {
             </Link>
             <p className="mt-3 text-center text-xs text-zinc-400">
               No credit card required · Cancel anytime
+            </p>
+            <p className="mt-4 rounded-lg border border-emerald-100 bg-emerald-50 px-4 py-3 text-center text-xs leading-relaxed text-emerald-800">
+              <span className="font-semibold">Payment is by bank transfer or GCash for now.</span>{" "}
+              Start your free trial today — when it ends, we&apos;ll send payment
+              details and activate your plan once we receive it. No card needed.
             </p>
           </div>
 

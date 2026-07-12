@@ -26,7 +26,7 @@ export default function TermsPage() {
       </ul>
       <h2>Subscription &amp; billing</h2>
       <p>
-        Plans are billed monthly at ₱999 per company plus ₱100 per active
+        Plans are billed monthly at ₱800 per company plus ₱100 per active
         employee, with optional add-ons. Trials convert only when you
         subscribe. You may cancel anytime; access continues until the end of
         the paid period.

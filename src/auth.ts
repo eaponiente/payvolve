@@ -2,6 +2,7 @@ import NextAuth, { type DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
+import { authConfig } from "@/auth.config";
 import type { Role } from "@/generated/prisma/enums";
 
 declare module "next-auth" {
@@ -24,9 +25,12 @@ declare module "next-auth" {
 /** How often a returning session re-checks tokenVersion against the DB. */
 const TOKEN_REVALIDATE_INTERVAL_SECONDS = 60 * 60; // 1 hour
 
+/** Consecutive failed logins that lock an account, and for how long. */
+const MAX_FAILED_LOGINS = 5;
+const LOCKOUT_MS = 15 * 60 * 1000; // 15 minutes
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 }, // 30 days
-  pages: { signIn: "/login" },
+  ...authConfig, // session, pages, and the proxy `authorized` callback
   providers: [
     Credentials({
       credentials: { email: {}, password: {} },
@@ -43,8 +47,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         });
         if (!user) return null;
 
+        // Account locked from prior failures: refuse without checking the
+        // password, so repeated attempts during the window don't extend it.
+        if (user.lockedUntil && user.lockedUntil > new Date()) return null;
+
         const ok = await bcrypt.compare(password, user.passwordHash);
-        if (!ok) return null;
+        if (!ok) {
+          // Count this failure; lock the account once the threshold is hit
+          // (resetting the counter so the next window starts clean).
+          const attempts = user.failedLoginAttempts + 1;
+          await prisma.user.update({
+            where: { id: user.id },
+            data:
+              attempts >= MAX_FAILED_LOGINS
+                ? { failedLoginAttempts: 0, lockedUntil: new Date(Date.now() + LOCKOUT_MS) }
+                : { failedLoginAttempts: attempts },
+          });
+          return null;
+        }
+
+        // Successful login: clear any accumulated failures / lockout.
+        if (user.failedLoginAttempts !== 0 || user.lockedUntil) {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { failedLoginAttempts: 0, lockedUntil: null },
+          });
+        }
 
         return {
           id: user.id,
@@ -58,6 +86,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    ...authConfig.callbacks, // keep `authorized` (used by proxy.ts)
     async jwt({ token, user }) {
       if (user) {
         // Initial sign-in: seed the token from the freshly-authenticated user.

@@ -1,16 +1,34 @@
-import { type NextRequest } from "next/server";
-import { createClient } from "@/utils/supabase/middleware";
+import NextAuth from "next-auth";
+import { authConfig } from "@/auth.config";
 
-export async function proxy(request: NextRequest) {
-  // Wire up the Supabase cookie handling layer.
-  // To actively refresh sessions here, call supabase.auth.getUser() or
-  // supabase.auth.getSession() inside the createClient helper before
-  // returning the response.
-  return createClient(request);
-}
+/**
+ * Defense-in-depth route gate. Every `(app)` page and server action still
+ * enforces its own guard (`requireUser` / `requireAdmin` / `requireOwner`);
+ * this blocks an unauthenticated request to a protected route before any page
+ * code runs, so a page that ever forgets its guard isn't silently public.
+ *
+ * Next 16 renamed `middleware.ts` → `proxy.ts` (Node.js runtime by default).
+ * We use a Prisma-free NextAuth instance (`authConfig`) so the proxy only
+ * verifies the JWT — the DB-backed `tokenVersion` check stays in `auth.ts`.
+ */
+const { auth } = NextAuth(authConfig);
+
+// Export as a specifier (not a destructured `export const`) so Next 16's proxy
+// loader statically recognizes it as the proxy function export.
+export { auth as proxy };
 
 export const config = {
+  // Protected product routes only — marketing, /login, /signup, and API auth
+  // routes are intentionally excluded. `:path*` also matches the bare segment.
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/dashboard/:path*",
+    "/employees/:path*",
+    "/payroll/:path*",
+    "/payslips/:path*",
+    "/reports/:path*",
+    "/schedule/:path*",
+    "/time/:path*",
+    "/billing/:path*",
+    "/dev/:path*",
   ],
 };

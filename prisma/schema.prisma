@@ -74,6 +74,10 @@ model User {
   // Bumped to invalidate all previously-issued JWTs for this user (e.g. on
   // role change or forced logout). Checked in the auth.ts jwt callback.
   tokenVersion Int       @default(0)
+  // Brute-force lockout: consecutive failed logins, and the time until which
+  // sign-in is refused once the threshold is hit. Reset on a successful login.
+  failedLoginAttempts Int      @default(0)
+  lockedUntil         DateTime?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 

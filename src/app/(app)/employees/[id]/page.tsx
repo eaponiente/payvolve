@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/tenant";
+import { decryptField } from "@/lib/crypto";
 import { updateEmployee } from "@/lib/actions/employee-actions";
 import { EmployeeForm } from "@/components/employee-form";
 import { PageHeader } from "@/components/ui";
@@ -39,10 +40,10 @@ export default async function EditEmployeePage({
           hireDate: employee.hireDate.toISOString().slice(0, 10),
           payType: employee.payType,
           baseRate: Number(employee.baseRate),
-          tin: employee.tin,
-          sssNumber: employee.sssNumber,
-          philhealthNumber: employee.philhealthNumber,
-          pagibigNumber: employee.pagibigNumber,
+          tin: decryptField(employee.tin),
+          sssNumber: decryptField(employee.sssNumber),
+          philhealthNumber: decryptField(employee.philhealthNumber),
+          pagibigNumber: decryptField(employee.pagibigNumber),
           active: employee.active,
           hasAccount: Boolean(employee.user),
         }}
