@@ -23,6 +23,11 @@ const loginSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
+const pinLoginSchema = z.object({
+  loginCode: z.string().trim().toUpperCase().min(1, "Login code is required"),
+  pin: z.string().regex(/^\d{4,6}$/, "PIN must be 4–6 digits"),
+});
+
 export async function signup(
   _prev: FormState,
   formData: FormData,
@@ -105,6 +110,51 @@ export async function login(
   } catch (err) {
     if (err instanceof AuthError) {
       return { error: "Invalid email or password" };
+    }
+    throw err; // NEXT_REDIRECT and friends must propagate
+  }
+}
+
+export async function loginWithPin(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  const ip = await clientIp();
+  // Share the same per-IP throttle as password login.
+  if (!rateLimit(`login:${ip}`, { limit: 10, windowMs: 15 * 60 * 1000 }).success) {
+    return { error: "Too many attempts. Please try again later." };
+  }
+
+  const parsed = pinLoginSchema.safeParse({
+    loginCode: formData.get("loginCode"),
+    pin: formData.get("pin"),
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
+  }
+
+  // Pre-check lockout so we can show a clear message (authorize() enforces it
+  // too, but NextAuth collapses credential errors to a generic one).
+  const account = await prisma.user.findUnique({
+    where: { loginCode: parsed.data.loginCode },
+    select: { lockedUntil: true },
+  });
+  if (account?.lockedUntil && account.lockedUntil > new Date()) {
+    const minutes = Math.ceil((account.lockedUntil.getTime() - Date.now()) / 60000);
+    return {
+      error: `Locked after too many failed attempts. Try again in ${minutes} minute${minutes === 1 ? "" : "s"}.`,
+    };
+  }
+
+  try {
+    await signIn("credentials", {
+      loginCode: parsed.data.loginCode,
+      pin: parsed.data.pin,
+      redirectTo: "/dashboard",
+    });
+  } catch (err) {
+    if (err instanceof AuthError) {
+      return { error: "Invalid login code or PIN" };
     }
     throw err; // NEXT_REDIRECT and friends must propagate
   }

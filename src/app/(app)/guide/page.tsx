@@ -25,6 +25,14 @@ const sections: Section[] = [
         a: "Owner has full access including Billing. Admin can manage employees, schedules, time entries and payroll. Employee can only see their own dashboard, schedule, time clock and payslips.",
       },
       {
+        q: "How do I make someone an admin?",
+        a: "Only an owner can change roles. First make sure the person has a self-service account (add it on their employee page if they don't). Then open their employee page — as an owner you'll see an Access role card with a Promote to Admin button. You can switch them back to Employee the same way. Ownership can't be handed over from here.",
+      },
+      {
+        q: "How do staff log in — email or PIN?",
+        a: "Both are supported. On an employee's page, an admin can add a login as either Email & password or Login code & PIN. Staff with a PIN sign in from the Staff PIN tab on the login screen using their login code (e.g. MARIA-042) and 4–6 digit PIN — handy for crew who don't use email. A PIN login has the same access as a password login, and the same 5-try lockout protects it.",
+      },
+      {
         q: "How do I deactivate someone who left?",
         a: "Open the employee and untick Active, then save. Deactivating blocks their login, closes any open time entry, and removes their future scheduled shifts. Their past payslips and records are kept for your history.",
       },

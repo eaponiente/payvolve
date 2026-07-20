@@ -65,8 +65,15 @@ model Company {
 
 model User {
   id           String    @id @default(cuid())
-  email        String    @unique
-  passwordHash String
+  // A user authenticates EITHER with email + passwordHash (owners/admins and
+  // staff who prefer it) OR with loginCode + pinHash (staff PIN login). Both
+  // identifiers are optional & unique — Postgres allows many NULLs in a unique
+  // index — but every user must have at least one working credential pair
+  // (enforced in application code, not the schema).
+  email        String?   @unique
+  passwordHash String?
+  loginCode    String?   @unique
+  pinHash      String?
   role         Role      @default(EMPLOYEE)
   companyId    String
   company      Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
