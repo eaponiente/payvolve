@@ -31,12 +31,14 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         { href: "/reports", label: "Reports" },
         // Billing is owner-only
         ...(user.role === "OWNER" ? [{ href: "/billing", label: "Billing" }] : []),
+        { href: "/guide", label: "Guide" },
       ]
     : [
         { href: "/dashboard", label: "Dashboard" },
         { href: "/schedule", label: "Schedule" },
         { href: "/time", label: "Time" },
         { href: "/payslips", label: "Payslips" },
+        { href: "/guide", label: "Guide" },
       ];
 
   if (isDev) {

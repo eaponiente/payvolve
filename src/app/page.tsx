@@ -95,7 +95,7 @@ export default async function LandingPage() {
                 href="/signup"
                 className="rounded-xl bg-emerald-600 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-emerald-600/20 transition-all hover:-translate-y-0.5 hover:bg-emerald-700"
               >
-                Start free — 14 days
+                Start free — 30 days
               </Link>
               <Link
                 href="/#calculator"
@@ -237,7 +237,7 @@ export default async function LandingPage() {
             </p>
             <ul className="mt-6 space-y-2 text-sm text-zinc-600">
               {[
-                "14-day free trial, no credit card",
+                "30-day free trial, no credit card",
                 "Unlimited payroll runs & reports",
                 "All government tables kept current",
                 "Cancel anytime",
@@ -266,7 +266,7 @@ export default async function LandingPage() {
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-emerald-50">
             Join Philippine teams running payroll in minutes, not weekends.
-            Free for 14 days — long enough to run a real cutoff.
+            Free for 30 days — long enough to run a full month of payroll.
           </p>
           <Link
             href="/signup"

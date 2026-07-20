@@ -15,11 +15,21 @@ async function openEntryFor(employeeId: string) {
   });
 }
 
+/** True if the employee record still exists and is active. */
+async function isActiveEmployee(employeeId: string) {
+  const employee = await prisma.employee.findUnique({
+    where: { id: employeeId },
+    select: { active: true },
+  });
+  return employee?.active === true;
+}
+
 /** Clock in the signed-in employee. */
 export async function clockIn(): Promise<void> {
   const user = await requireUser();
   if (!user.employeeId) return;
   if (!(await getEntitlement(user.companyId)).entitled) return;
+  if (!(await isActiveEmployee(user.employeeId))) return; // deactivated employee
   const open = await openEntryFor(user.employeeId);
   if (open) return; // already clocked in
 
@@ -45,6 +55,7 @@ export async function clockOut(): Promise<void> {
   const user = await requireUser();
   if (!user.employeeId) return;
   if (!(await getEntitlement(user.companyId)).entitled) return;
+  if (!(await isActiveEmployee(user.employeeId))) return; // deactivated employee
   const open = await openEntryFor(user.employeeId);
   if (!open) return;
   await prisma.timeEntry.update({

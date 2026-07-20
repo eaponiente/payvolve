@@ -146,6 +146,20 @@ export async function createPayrollRun(
     return { error: "No active employees to pay" };
   }
 
+  // Prevent two runs of the same type covering overlapping dates.
+  const overlapping = await prisma.payrollRun.findFirst({
+    where: {
+      companyId: user.companyId,
+      type,
+      periodStart: { lte: periodEnd },
+      periodEnd: { gte: periodStart },
+    },
+    select: { id: true },
+  });
+  if (overlapping) {
+    return { error: "A payroll run already exists for this period." };
+  }
+
   const run = await prisma.payrollRun.create({
     data: {
       companyId: user.companyId,
@@ -168,11 +182,15 @@ async function draftRunOrNull(runId: string, companyId: string) {
 }
 
 /** Recompute a draft run's payslips from current time entries and rates. */
-export async function recomputeRun(runId: string): Promise<void> {
+export async function recomputeRun(
+  runId: string,
+): Promise<{ error?: string } | undefined> {
   const user = await requireAdmin();
-  if (!(await getEntitlement(user.companyId)).entitled) return;
+  if (!(await getEntitlement(user.companyId)).entitled) {
+    return { error: LOCKED_MESSAGE };
+  }
   const run = await draftRunOrNull(runId, user.companyId);
-  if (!run) return;
+  if (!run) return { error: "Run not found or already finalized" };
 
   const payslips =
     run.type === "REGULAR"
@@ -197,7 +215,9 @@ export async function finalizeRun(
   runId: string,
 ): Promise<{ error?: string } | undefined> {
   const user = await requireAdmin();
-  if (!(await getEntitlement(user.companyId)).entitled) return;
+  if (!(await getEntitlement(user.companyId)).entitled) {
+    return { error: LOCKED_MESSAGE };
+  }
   const result = await prisma.payrollRun.updateMany({
     where: { id: runId, companyId: user.companyId, status: "DRAFT" },
     data: { status: "FINALIZED", finalizedAt: new Date() },

@@ -43,7 +43,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const user = await prisma.user.findUnique({
           where: { email },
-          include: { employee: { select: { id: true } } },
+          include: { employee: { select: { id: true, active: true } } },
         });
         if (!user) return null;
 
@@ -65,6 +65,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           });
           return null;
         }
+
+        // Deactivated (e.g. terminated) employees keep their login row but must
+        // not be able to sign in. Owners/admins have no linked employee, so this
+        // only gates employee accounts.
+        if (user.employee && !user.employee.active) return null;
 
         // Successful login: clear any accumulated failures / lockout.
         if (user.failedLoginAttempts !== 0 || user.lockedUntil) {

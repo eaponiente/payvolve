@@ -102,13 +102,41 @@ export async function updateEmployee(
   const parsed = parseEmployeeForm(formData);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 
-  // updateMany so companyId is part of the filter — tenant isolation
-  const result = await prisma.employee.updateMany({
+  // Look up first (tenant-scoped) so we have the linked account for cleanup.
+  const employee = await prisma.employee.findFirst({
     where: { id: employeeId, companyId: user.companyId },
-    data: encryptGovIds(parsed.data),
+    select: { id: true, userId: true },
   });
-  if (result.count === 0) return { error: "Employee not found" };
+  if (!employee) return { error: "Employee not found" };
+
+  await prisma.$transaction(async (tx) => {
+    await tx.employee.update({
+      where: { id: employee.id },
+      data: encryptGovIds(parsed.data),
+    });
+
+    // Deactivation cleanup: don't leave a terminated employee with an open
+    // shift on the clock or future scheduled shifts, and force-log-out their
+    // login so any live session is dropped at its next revalidation.
+    if (!parsed.data.active) {
+      await tx.timeEntry.updateMany({
+        where: { employeeId: employee.id, clockOut: null },
+        data: { clockOut: new Date() },
+      });
+      await tx.shift.deleteMany({
+        where: { employeeId: employee.id, startsAt: { gt: new Date() } },
+      });
+      if (employee.userId) {
+        await tx.user.update({
+          where: { id: employee.userId },
+          data: { tokenVersion: { increment: 1 } },
+        });
+      }
+    }
+  });
 
   revalidatePath("/employees");
+  revalidatePath("/schedule");
+  revalidatePath("/time");
   redirect("/employees");
 }
