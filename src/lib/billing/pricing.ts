@@ -11,7 +11,7 @@ import { round2 } from "@/lib/payroll/money";
 export const BASE_FEE = 800;
 export const PER_EMPLOYEE_FEE = 100;
 export const EWA_PER_EMPLOYEE_FEE = 100;
-export const TRIAL_DAYS = 14;
+export const TRIAL_DAYS = 30;
 
 export type BillLine = { label: string; detail?: string; amount: number };
 

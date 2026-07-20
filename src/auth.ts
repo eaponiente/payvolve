@@ -29,29 +29,53 @@ const TOKEN_REVALIDATE_INTERVAL_SECONDS = 60 * 60; // 1 hour
 const MAX_FAILED_LOGINS = 5;
 const LOCKOUT_MS = 15 * 60 * 1000; // 15 minutes
 
+/** Look up an account by either unique identifier, with its employee status. */
+function findAccount(where: { email: string } | { loginCode: string }) {
+  return prisma.user.findUnique({
+    where,
+    include: { employee: { select: { id: true, active: true } } },
+  });
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig, // session, pages, and the proxy `authorized` callback
   providers: [
     Credentials({
-      credentials: { email: {}, password: {} },
+      credentials: { email: {}, password: {}, loginCode: {}, pin: {} },
       authorize: async (credentials) => {
+        // Two credential paths: email + password, or loginCode + PIN (staff
+        // PIN login). Everything after the lookup — lockout, failure counting,
+        // active-employee check — is identical for both.
+        const loginCode = String(credentials?.loginCode ?? "")
+          .trim()
+          .toUpperCase();
+        const pin = String(credentials?.pin ?? "");
         const email = String(credentials?.email ?? "")
           .trim()
           .toLowerCase();
         const password = String(credentials?.password ?? "");
-        if (!email || !password) return null;
 
-        const user = await prisma.user.findUnique({
-          where: { email },
-          include: { employee: { select: { id: true } } },
-        });
-        if (!user) return null;
+        let user: Awaited<ReturnType<typeof findAccount>> = null;
+        let secret: string;
+        let hash: string | null;
+        if (loginCode && pin) {
+          user = await findAccount({ loginCode });
+          secret = pin;
+          hash = user?.pinHash ?? null;
+        } else if (email && password) {
+          user = await findAccount({ email });
+          secret = password;
+          hash = user?.passwordHash ?? null;
+        } else {
+          return null;
+        }
+        if (!user || !hash) return null;
 
         // Account locked from prior failures: refuse without checking the
-        // password, so repeated attempts during the window don't extend it.
+        // secret, so repeated attempts during the window don't extend it.
         if (user.lockedUntil && user.lockedUntil > new Date()) return null;
 
-        const ok = await bcrypt.compare(password, user.passwordHash);
+        const ok = await bcrypt.compare(secret, hash);
         if (!ok) {
           // Count this failure; lock the account once the threshold is hit
           // (resetting the counter so the next window starts clean).
@@ -65,6 +89,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           });
           return null;
         }
+
+        // Deactivated (e.g. terminated) employees keep their login row but must
+        // not be able to sign in. Owners/admins have no linked employee, so this
+        // only gates employee accounts.
+        if (user.employee && !user.employee.active) return null;
 
         // Successful login: clear any accumulated failures / lockout.
         if (user.failedLoginAttempts !== 0 || user.lockedUntil) {

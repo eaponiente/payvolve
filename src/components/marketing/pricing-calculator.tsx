@@ -97,7 +97,7 @@ export function PricingCalculator() {
         href="/signup"
         className="mt-6 block w-full rounded-xl bg-emerald-600 py-3 text-center text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700"
       >
-        Start 14-day free trial — no credit card
+        Start 30-day free trial — no credit card
       </Link>
     </div>
   );

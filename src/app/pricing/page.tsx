@@ -8,7 +8,7 @@ import { Faq } from "@/components/marketing/faq";
 export const metadata: Metadata = {
   title: "Pricing — PondoFlow",
   description:
-    "One simple plan: ₱800/company + ₱100/employee per month. 14-day free trial, no credit card.",
+    "One simple plan: ₱800/company + ₱100/employee per month. 30-day free trial, no credit card.",
 };
 
 const included = [
@@ -146,7 +146,7 @@ export default function PricingPage() {
           <div className="mt-16 rounded-3xl bg-gradient-to-br from-emerald-600 to-teal-600 px-6 py-12 text-center text-white">
             <h2 className="text-2xl font-bold">Run your first cutoff free.</h2>
             <p className="mt-2 text-emerald-50">
-              14 days is enough to onboard your crew and run a real payroll.
+              30 days is enough to onboard your crew and run a full payroll cycle.
             </p>
             <Link
               href="/signup"

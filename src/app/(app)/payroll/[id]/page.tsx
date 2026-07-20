@@ -2,11 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/tenant";
-import { deleteRun, finalizeRun, recomputeRun } from "@/lib/actions/payroll-actions";
 import { phpFormat } from "@/lib/payroll/money";
 import { formatPeriod } from "@/lib/payroll/period";
 import { getEntitlement } from "@/lib/billing/subscription";
-import { Badge, Button, ButtonLink, Card, PageHeader, Td, Th } from "@/components/ui";
+import { PayrollRunActions } from "@/components/payroll-run-actions";
+import { Badge, ButtonLink, Card, PageHeader, Td, Th } from "@/components/ui";
 
 const dateFmt = new Intl.DateTimeFormat("en-PH", {
   month: "short",
@@ -52,27 +52,7 @@ export default async function PayrollRunPage({
           <div className="flex items-center gap-2">
             {isDraft ? (
               entitled ? (
-                <>
-                  <form
-                    action={async () => {
-                      "use server";
-                      await deleteRun(run.id);
-                    }}
-                  >
-                    <Button variant="danger">Delete draft</Button>
-                  </form>
-                  <form action={recomputeRun.bind(null, run.id)}>
-                    <Button variant="secondary">Recompute</Button>
-                  </form>
-                  <form
-                    action={async () => {
-                      "use server";
-                      await finalizeRun(run.id);
-                    }}
-                  >
-                    <Button>Finalize run</Button>
-                  </form>
-                </>
+                <PayrollRunActions runId={run.id} />
               ) : (
                 <ButtonLink href="/billing" variant="secondary">
                   Reactivate to finalize

@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { requireOwner } from "@/lib/tenant";
 import { computeBill } from "@/lib/billing/pricing";
-import { currentBillingPeriod } from "@/lib/billing/period";
 import { getOrCreateSubscription } from "@/lib/billing/subscription";
 
 /**
@@ -23,27 +22,33 @@ async function activeEmployeeCount(companyId: string): Promise<number> {
 export async function subscribe(): Promise<void> {
   const user = await requireOwner();
   const sub = await getOrCreateSubscription(user.companyId);
-  const period = currentBillingPeriod();
   const count = await activeEmployeeCount(user.companyId);
   const bill = computeBill(count, sub.includeEwa);
 
   await chargeCustomer(user.companyId, bill.total);
+
+  // Paid window is a rolling month from today, so subscribing mid-month still
+  // grants a full month of access (matches the dev activation flow) rather than
+  // lapsing at the end of the calendar month.
+  const start = new Date();
+  const paidThrough = new Date(start);
+  paidThrough.setMonth(paidThrough.getMonth() + 1);
 
   await prisma.$transaction([
     prisma.subscription.update({
       where: { id: sub.id },
       data: {
         status: "ACTIVE",
-        currentPeriodStart: period.start,
-        currentPeriodEnd: period.end,
+        currentPeriodStart: start,
+        currentPeriodEnd: paidThrough,
         canceledAt: null,
       },
     }),
     prisma.invoice.create({
       data: {
         companyId: user.companyId,
-        periodStart: period.start,
-        periodEnd: period.end,
+        periodStart: start,
+        periodEnd: paidThrough,
         employeeCount: count,
         baseAmount: bill.base,
         perEmployeeTotal: bill.perEmployeeTotal,
@@ -68,6 +73,15 @@ export async function payInvoice(
   if (!invoice) return { error: "Invoice not found or already paid" };
 
   await chargeCustomer(user.companyId, Number(invoice.total));
+
+  // Advance the paid window to a rolling month from now (same as subscribe()),
+  // otherwise paying an invoice whose period has already passed would flip the
+  // sub to ACTIVE while isEntitled() still reads currentPeriodEnd as expired —
+  // the owner would pay and stay locked out.
+  const start = new Date();
+  const paidThrough = new Date(start);
+  paidThrough.setMonth(paidThrough.getMonth() + 1);
+
   await prisma.$transaction([
     prisma.invoice.update({
       where: { id: invoice.id },
@@ -75,7 +89,12 @@ export async function payInvoice(
     }),
     prisma.subscription.updateMany({
       where: { companyId: user.companyId },
-      data: { status: "ACTIVE" },
+      data: {
+        status: "ACTIVE",
+        currentPeriodStart: start,
+        currentPeriodEnd: paidThrough,
+        canceledAt: null,
+      },
     }),
   ]);
   revalidatePath("/billing");

@@ -20,14 +20,12 @@ export function BugReportDialog() {
     if (!open && dlg.open) dlg.close();
   }, [open]);
 
-  // On success: clear the fields and auto-close shortly after.
+  // On success: auto-close shortly after (the success view replaces the form,
+  // and fields are reset when the dialog is next opened).
   useEffect(() => {
-    if (state?.success) {
-      setName("");
-      setFeedback("");
-      const t = setTimeout(() => setOpen(false), 1400);
-      return () => clearTimeout(t);
-    }
+    if (!state?.success) return;
+    const t = setTimeout(() => setOpen(false), 1400);
+    return () => clearTimeout(t);
   }, [state?.success]);
 
   const inputCls =
@@ -37,7 +35,11 @@ export function BugReportDialog() {
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setName("");
+          setFeedback("");
+          setOpen(true);
+        }}
         className="inline-flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-emerald-700"
       >
         🐞 Report a bug

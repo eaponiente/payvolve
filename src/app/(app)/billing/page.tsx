@@ -66,7 +66,9 @@ export default async function BillingPage() {
       )}
       {!entitled && sub.status !== "TRIALING" && (
         <p className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          Subscription {STATUS_LABEL[sub.status].toLowerCase()}. Subscribe to restore access.
+          {sub.status === "ACTIVE"
+            ? "Your subscription period has ended. Renew to restore scheduling and payroll."
+            : `Subscription ${STATUS_LABEL[sub.status].toLowerCase()}. Subscribe to restore access.`}
         </p>
       )}
 
@@ -108,7 +110,7 @@ export default async function BillingPage() {
         </table>
 
         <div className="mt-6 flex flex-wrap items-center gap-3">
-          {sub.status === "ACTIVE" ? (
+          {sub.status === "ACTIVE" && entitled ? (
             <form action={cancelSubscription}>
               <Button variant="danger">Cancel subscription</Button>
             </form>
