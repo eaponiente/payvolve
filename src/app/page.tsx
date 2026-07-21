@@ -5,8 +5,28 @@ import { MarketingNav } from "@/components/marketing/nav";
 import { MarketingFooter } from "@/components/marketing/footer";
 import { NetPayCalculator } from "@/components/marketing/net-pay-calculator";
 import { PricingCalculator } from "@/components/marketing/pricing-calculator";
-import { Faq } from "@/components/marketing/faq";
+import { Faq, faqs } from "@/components/marketing/faq";
 import { ContactForm } from "@/components/marketing/contact-form";
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "PondoFlow",
+    url: "https://pondoflow.com",
+    email: "support@pondoflow.com",
+    description: "Payroll, attendance, and scheduling software for Philippine businesses.",
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  },
+];
 
 const features = [
   {
@@ -65,6 +85,10 @@ export default async function LandingPage() {
 
   return (
     <div className="bg-white text-zinc-900">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <MarketingNav />
 
       {/* ── Hero ─────────────────────────────────────── */}

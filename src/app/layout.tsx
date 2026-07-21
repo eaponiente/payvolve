@@ -12,12 +12,30 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = "https://pondoflow.com";
+const title = "PondoFlow — Payroll for PH Teams";
+const description =
+  "Automated payroll, attendance, and payslips for Philippine businesses. SSS, PhilHealth, Pag-IBIG, and BIR withholding computed for you every cutoff.";
+
 export const metadata: Metadata = {
-  title: "PondoFlow — Payroll for PH Teams",
-  description:
-    "Automated payroll, attendance, and payslips for Philippine businesses.",
+  metadataBase: new URL(siteUrl),
+  title: { default: title, template: "%s — PondoFlow" },
+  description,
   manifest: "/manifest.json",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "PondoFlow" },
+  openGraph: {
+    type: "website",
+    locale: "en_PH",
+    url: siteUrl,
+    siteName: "PondoFlow",
+    title,
+    description,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+  },
 };
 
 export const viewport: Viewport = {

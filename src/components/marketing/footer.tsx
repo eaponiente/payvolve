@@ -85,7 +85,7 @@ export function MarketingFooter() {
         </div>
         <div className="mt-10 flex flex-col items-start justify-between gap-2 border-t border-zinc-200 pt-6 text-xs text-zinc-400 sm:flex-row">
           <p>© {new Date().getFullYear()} PondoFlow. All rights reserved.</p>
-          <p>Made for Philippine businesses 🇵🇭 · Demo build — payments simulated.</p>
+          <p>🔒 Government IDs encrypted at rest · Made for Philippine businesses 🇵🇭</p>
         </div>
       </div>
     </footer>
