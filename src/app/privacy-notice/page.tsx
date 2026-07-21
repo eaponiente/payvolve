@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/marketing/legal-page";
 
-export const metadata: Metadata = { title: "Privacy notice — PondoFlow" };
+export const metadata: Metadata = {
+  title: "Privacy notice",
+  description: "Privacy notice for employees whose employers use PondoFlow to run payroll, scheduling, and time tracking.",
+};
 
 export default function PrivacyNoticePage() {
   return (
@@ -36,7 +39,7 @@ export default function PrivacyNoticePage() {
       <p>
         For corrections or access requests, contact your employer&apos;s HR or
         payroll administrator first. You may also reach PondoFlow&apos;s Data
-        Protection Officer at privacy@pondoflow.ph, or the National Privacy
+        Protection Officer at support@pondoflow.com, or the National Privacy
         Commission at privacy.gov.ph.
       </p>
     </LegalPage>

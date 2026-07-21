@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/marketing/legal-page";
 
-export const metadata: Metadata = { title: "Terms of service — PondoFlow" };
+export const metadata: Metadata = {
+  title: "Terms of service",
+  description: "The terms that govern your use of PondoFlow's payroll, scheduling, and time-tracking platform.",
+};
 
 export default function TermsPage() {
   return (

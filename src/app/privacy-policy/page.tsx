@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/marketing/legal-page";
 
-export const metadata: Metadata = { title: "Privacy policy — PondoFlow" };
+export const metadata: Metadata = {
+  title: "Privacy policy",
+  description: "How PondoFlow collects, uses, and protects business and employee data under the Philippine Data Privacy Act (RA 10173).",
+};
 
 export default function PrivacyPolicyPage() {
   return (
@@ -46,7 +49,7 @@ export default function PrivacyPolicyPage() {
       <p>
         Under the Data Privacy Act you may access, correct, or request deletion
         of your personal data, and lodge complaints with the National Privacy
-        Commission. Contact our Data Protection Officer at privacy@pondoflow.ph.
+        Commission. Contact our Data Protection Officer at support@pondoflow.com.
       </p>
     </LegalPage>
   );

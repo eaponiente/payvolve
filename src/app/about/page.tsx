@@ -2,7 +2,11 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/marketing/legal-page";
 
-export const metadata: Metadata = { title: "About us — PondoFlow" };
+export const metadata: Metadata = {
+  title: "About us",
+  description:
+    "PondoFlow builds payroll software for Philippine businesses — SSS, PhilHealth, Pag-IBIG, and BIR compliance built in, made for teams that run semi-monthly payroll.",
+};
 
 export default function AboutPage() {
   return (
@@ -36,7 +40,7 @@ export default function AboutPage() {
         <Link href="/#contact" className="text-emerald-700 underline">
           contact form
         </Link>{" "}
-        or at hello@pondoflow.ph.
+        or at support@pondoflow.com.
       </p>
     </LegalPage>
   );

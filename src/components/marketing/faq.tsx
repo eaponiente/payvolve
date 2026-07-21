@@ -1,4 +1,4 @@
-const faqs = [
+export const faqs = [
   {
     q: "Is PondoFlow compliant with Philippine payroll regulations?",
     a: "Yes. Payroll runs use the current SSS 2025 contribution table, PhilHealth 5% premium, Pag-IBIG contributions, and the BIR TRAIN withholding tax table. Overtime (125%), night differential (+10%, 10 PM–6 AM), and 13th-month pay under PD 851 are computed automatically, and payslips are BIR-friendly.",

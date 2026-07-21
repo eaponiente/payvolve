@@ -6,7 +6,7 @@ import { PricingCalculator } from "@/components/marketing/pricing-calculator";
 import { Faq } from "@/components/marketing/faq";
 
 export const metadata: Metadata = {
-  title: "Pricing — PondoFlow",
+  title: "Pricing",
   description:
     "One simple plan: ₱800/company + ₱100/employee per month. 30-day free trial, no credit card.",
 };
