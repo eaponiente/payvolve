@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Analytics } from "./analytics";
+import { CaptureAttribution } from "./capture-attribution";
 
 const columns: { heading: string; links: { href: string; label: string }[] }[] = [
   {
@@ -42,6 +44,8 @@ const columns: { heading: string; links: { href: string; label: string }[] }[] =
 export function MarketingFooter() {
   return (
     <footer className="border-t border-zinc-200 bg-zinc-50">
+      <Analytics />
+      <CaptureAttribution />
       <div className="mx-auto max-w-6xl px-4 py-12">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
           <div>
