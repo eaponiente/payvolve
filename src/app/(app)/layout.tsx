@@ -7,6 +7,7 @@ import { logout } from "@/lib/actions/auth-actions";
 import { getEntitlement } from "@/lib/billing/subscription";
 import { currentUserIsDev } from "@/lib/dev";
 import { BugReportDialog } from "@/components/bug-report-dialog";
+import { DevMenu } from "@/components/dev-menu";
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const user = await requireUser();
@@ -41,12 +42,16 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         { href: "/guide", label: "Guide" },
       ];
 
-  if (isDev) {
-    nav.push({ href: "/dev/subscriptions", label: "Subscriptions" });
-    nav.push({ href: "/dev/bug-reports", label: "Bug reports" });
-    nav.push({ href: "/dev/contact-messages", label: "Messages" });
-    nav.push({ href: "/dev/attribution", label: "Attribution" });
-  }
+  // Platform-operator tools live in a separate "Dev" dropdown so they don't
+  // crowd the product nav (see DevMenu). Only rendered for dev accounts.
+  const devNav = isDev
+    ? [
+        { href: "/dev/subscriptions", label: "Subscriptions" },
+        { href: "/dev/bug-reports", label: "Bug reports" },
+        { href: "/dev/contact-messages", label: "Messages" },
+        { href: "/dev/attribution", label: "Attribution" },
+      ]
+    : [];
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -66,6 +71,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
                   {item.label}
                 </Link>
               ))}
+              {devNav.length > 0 && <DevMenu links={devNav} />}
             </nav>
           </div>
           <div className="flex items-center gap-3">
@@ -79,13 +85,26 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
             </form>
           </div>
         </div>
-        {/* Mobile nav */}
+        {/* Mobile nav (horizontal scroll). Dev tools are appended after a
+            divider and tinted amber so they read as operator-only. */}
         <nav className="no-print flex items-center gap-1 overflow-x-auto border-t border-zinc-100 px-4 py-1.5 sm:hidden">
           {nav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               className="shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-100"
+            >
+              {item.label}
+            </Link>
+          ))}
+          {devNav.length > 0 && (
+            <span className="mx-1 h-4 w-px shrink-0 bg-zinc-200" aria-hidden="true" />
+          )}
+          {devNav.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium text-amber-700 hover:bg-amber-50"
             >
               {item.label}
             </Link>
