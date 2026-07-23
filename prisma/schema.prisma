@@ -52,6 +52,18 @@ model Company {
   name            String
   // payroll settings
   workHoursPerDay Int      @default(8)
+  // First-touch marketing attribution captured at signup (see
+  // components/marketing/capture-attribution.tsx). All optional — most signups
+  // arrive direct/organic and leave these null.
+  utmSource       String?
+  utmMedium       String?
+  utmCampaign     String?
+  utmTerm         String?
+  utmContent      String?
+  fbclid          String?
+  gclid           String?
+  referrer        String?
+  landingPath     String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

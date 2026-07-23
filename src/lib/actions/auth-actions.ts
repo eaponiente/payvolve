@@ -1,6 +1,7 @@
 "use server";
 
 import { AuthError } from "next-auth";
+import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { signIn, signOut } from "@/auth";
@@ -11,6 +12,42 @@ import { rateLimit } from "@/lib/rate-limit";
 import { clientIp } from "@/lib/client-ip";
 
 export type FormState = { error?: string; success?: boolean } | undefined;
+
+// Maps the first-touch attribution cookie (set client-side by
+// components/marketing/capture-attribution.tsx) to Company columns.
+const ATTR_COOKIE = "pf_attr";
+const ATTR_FIELDS: Record<string, string> = {
+  utm_source: "utmSource",
+  utm_medium: "utmMedium",
+  utm_campaign: "utmCampaign",
+  utm_term: "utmTerm",
+  utm_content: "utmContent",
+  fbclid: "fbclid",
+  gclid: "gclid",
+  referrer: "referrer",
+  landingPath: "landingPath",
+};
+
+/**
+ * Reads the `pf_attr` cookie and returns Company attribution fields. Fully
+ * defensive — attribution must never be able to break a signup, so any parse
+ * error yields an empty object.
+ */
+async function readAttribution(): Promise<Record<string, string>> {
+  try {
+    const raw = (await cookies()).get(ATTR_COOKIE)?.value;
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    const out: Record<string, string> = {};
+    for (const [key, column] of Object.entries(ATTR_FIELDS)) {
+      const value = parsed[key];
+      if (typeof value === "string" && value) out[column] = value.slice(0, 300);
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
 
 const signupSchema = z.object({
   companyName: z.string().trim().min(2, "Company name is required"),
@@ -52,9 +89,11 @@ export async function signup(
   if (existing) return { error: "An account with this email already exists" };
 
   const passwordHash = await bcrypt.hash(password, 10);
+  const attribution = await readAttribution();
   await prisma.company.create({
     data: {
       name: companyName,
+      ...attribution,
       users: { create: { email, passwordHash, role: "OWNER" } },
       subscription: {
         create: {
@@ -66,6 +105,9 @@ export async function signup(
       },
     },
   });
+
+  // First-touch is spent — drop the cookie so a shared browser doesn't reuse it.
+  (await cookies()).delete(ATTR_COOKIE);
 
   await signIn("credentials", { email, password, redirectTo: "/dashboard" });
 }
